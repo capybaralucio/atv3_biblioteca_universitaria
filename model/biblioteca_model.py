@@ -1,1 +1,1 @@
-print("\n----BIBLIOTECA UNIVERSITARIA (model)----\n")
+#   BIBLIOTECA UNIVERSITARIA (model)
