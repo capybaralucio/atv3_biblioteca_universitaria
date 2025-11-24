@@ -78,6 +78,7 @@ class AutorModel:
             sql = "DELETE FROM autor WHERE id=%s"
             self.cursor.execute(sql, (id_autor,))
             self.conexao.commit()
+            print("\nAutor excluído com sucesso!!\n")
 
         except Exception as e:
             print("\nErro ao excluir autor.\n", e)
