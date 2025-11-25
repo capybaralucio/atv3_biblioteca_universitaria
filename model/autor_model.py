@@ -1,18 +1,11 @@
 #   BIBLIOTECA UNIVERSITARIA (model do autor)
-import psycopg2
+from model.conexao import Conexao
 
 class AutorModel:
     def __init__(self):
         try:
-            self.conexao = psycopg2.connect(
-                host = "localhost",
-                database = "bibliotecabd",
-                user = "postgres",
-                password = "admin6",
-                port = "5432"
-            )
+            self.conexao = Conexao().conectar()
             self.cursor = self.conexao.cursor()
-
         except Exception as e:
             print("\nErro ao conectar ao banco:\n", e)
 
@@ -22,16 +15,16 @@ class AutorModel:
             sql = "INSERT INTO autor (nome, nacionalidade) VALUES (%s, %s)"
             self.cursor.execute(sql, (nome, nacionalidade))
             self.conexao.commit()
-            print("\nAutor cadastrado com sucesso!\n")
+            return True
 
         except Exception as e:
             print("\nErro ao cadastrar autor:\n", e)
             self.conexao.rollback()
-
+            return False
 
     def listar_autores(self):
         try:
-            self.cursor.execute("SELECT * FROM autor")
+            self.cursor.execute("SELECT * FROM autor ORDER BY id")
             return self.cursor.fetchall()
         
         except Exception as e:
@@ -56,8 +49,7 @@ class AutorModel:
 
             
             if not partes:
-                print("\nNenhum campo para atualizar.\n")
-                return
+                return False
             
 
             sql += ", ".join(partes) + " WHERE id = %s"
@@ -66,26 +58,22 @@ class AutorModel:
 
             self.cursor.execute(sql, tuple(valores))
             self.conexao.commit()
-            print("\nAutor atualizado com sucesso!\n")
+            return self.cursor.rowcount > 0
 
         except Exception as e:
             print("\nErro ao atualizar o autor.\n", e)
             self.conexao.rollback()
-
+            return False
 
     def excluir_autor(self, id_autor):
         try:
             sql = "DELETE FROM autor WHERE id=%s"
             self.cursor.execute(sql, (id_autor,))
             self.conexao.commit()
+            return self.cursor.rowcount > 0
 
         except Exception as e:
             print("\nErro ao excluir autor.\n", e)
             self.conexao.rollback()
-
+            return False
     
-    def fechar_conexao(self):
-        if self.cursor:
-            self.cursor.close()
-        if self.conexao:
-            self.conexao.close()

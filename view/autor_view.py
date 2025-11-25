@@ -22,15 +22,18 @@ class AutorView:
                 nome = input ("Nome do autor: ")
                 nacionalidade = input("Nacionalidade: ")
 
-                controller.cadastrar_autor(nome, nacionalidade)
-
+                msg = controller.cadastrar_autor(nome, nacionalidade)
+                print(msg)
 
             elif opcao == "2":
                 autores = controller.listar_autores()
 
-                print("\n=== LISTA DE AUTORES ===")
-                for a in autores:
-                    print(f"ID: {a[0]} | Nome: {a[1]} | Nacionalidade: {a[2]}")
+                if not autores:
+                    print("\nNenhum autor encontrado.\n")
+                else:
+                    print("\n=== LISTA DE AUTORES ===")
+                    for a in autores:
+                        print(f"ID: {a[0]} | Nome: {a[1]} | Nacionalidade: {a[2]}")
 
 
             elif opcao == "3":
@@ -41,12 +44,15 @@ class AutorView:
                 novo_nome = input("Novo nome: ") or None
                 nova_nacionalidade = input("Nova nacionalidade: ") or None
 
-                controller.atualizar(id_autor, novo_nome, nova_nacionalidade)
+                msg = controller.atualizar_autor(id_autor, novo_nome, nova_nacionalidade)
+                print(msg)
 
 
             elif opcao == "4":
                 id_autor = input("ID do autor: ")
-                controller.excluir(id_autor)    
+                
+                msg = controller.excluir_autor(id_autor)
+                print(msg)
 
 
             elif opcao == "5":

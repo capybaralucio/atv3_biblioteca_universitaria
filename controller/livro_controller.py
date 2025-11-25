@@ -18,9 +18,12 @@ class LivroController:
         if not id_autor:
             return "\nO ID do autor não pode ser nulo.\n"
         
-        self.model.cadastrar_livro(titulo, ano_publicacao, id_autor)
-        return "\nSeu livro foi cadastrado com sucesso!!\n"
-    
+        sucesso = self.model.cadastrar_livro(titulo, ano_publicacao, id_autor)
+        
+        if sucesso:
+            return "\nSeu livro foi cadastrado com sucesso!!\n"
+        else:
+            return "\nErro ao cadastrar o livro.\n"
 
     def atualizar_livro(self, id_livro, novo_titulo=None,novo_ano=None, novo_autor=None):
         if not id_livro:
@@ -29,19 +32,27 @@ class LivroController:
         if novo_titulo is None and novo_ano is None and novo_autor is None:
             return "\nNada para atualizar.\n"
         
-        self.model.atualizar_livro(id_livro, novo_titulo, novo_ano, novo_autor)
-        return "\nLivro atualizado com sucesso!!\n"
-    
+        atualizado = self.model.atualizar_livro(id_livro, novo_titulo, novo_ano, novo_autor)
+        
+        if atualizado:
+            return "\nLivro atualizado com sucesso!!\n"
+        else:
+            return "\nNenhum livro atualizado (ID pode não existir).\n"
 
     def excluir_livro(self, id_livro):
         if not id_livro:
             return "\nID inválido.\n"
         
         try:
-            self.model.excluir_livro(id_livro)
-            return "\nLivro excluído com sucesso!!\n"
+            excluido = self.model.excluir_livro(id_livro)
+
+            if excluido:
+                return "\nLivro excluído com sucesso!!\n"
+            else:
+                return f"\nNenhum livro encontrado com esse ID.\n"
+
         except Exception as e:
-            return f"\nErro ao excluir o livro: {e}\n"
+            return "\nErro ao excluir livro: {e}\n"
         
 
     def listar_livros(self):
@@ -53,6 +64,13 @@ class LivroController:
 
         texto = "\n----LISTA DE LIVROS----\n"
         for livro in livros:
-            texto += f"ID: {livro[0]} | Título: {livro[1]} | Ano: {livro[2]} | Autor: {livro[3]}\n"
-        
+            texto += (
+                f"ID: {livro[0]}\n"
+                f"Título: {livro[1]}\n"
+                f"Ano: {livro[2]}\n"
+                f"Autor: {livro[3]}\n"
+                f"Nacionalidade: {livro[4]}\n"
+                "------------------------------\n"
+            )
+
         return texto

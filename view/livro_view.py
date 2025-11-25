@@ -22,13 +22,18 @@ class LivroView:
                 ano = input("Ano e publicacão: ")
                 id_autor = input("ID do autor: ")
 
-                controller.cadastrar(titulo, ano, id_autor)
+                print(controller.cadastrar_livro(titulo, ano, id_autor))
 
             elif opcao == "2":
-                livros = controller.listar()
+                livros = controller.listar_livros()
+
+                if isinstance(livros, str):
+                    print(livros)
+                    continue
+
                 print("\n=== LISTA DE LIVROS ===")
                 for l in livros:
-                    print(f"ID: {l[0]} | Título: {1[1]} | Ano: {1[2]} | Autor: {l[3]}")
+                    print(f"ID: {l[0]} | Título: {l[1]} | Ano: {l[2]} | Autor: {l[3]}")
 
             elif opcao == "3":
                 id_livro = input("ID do livro: ")
@@ -39,11 +44,11 @@ class LivroView:
                 novo_ano = input("Novo ano: ") or None
                 novo_autor = input("Novo ID do autor: ") or None
 
-                controller.atualizar(id_livro, novo_titulo, novo_ano, novo_autor)                
+                print(controller.atualizar_livro(id_livro, novo_titulo, novo_ano, novo_autor))                
 
             elif opcao == "4":
-                id_autor = input("ID do livro: ")
-                controller.excluir(id_livro)    
+                id_livro = input("ID do livro: ")
+                print(controller.excluir_livro(id_livro))    
 
             elif opcao == "5":
                 break

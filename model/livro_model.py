@@ -1,18 +1,11 @@
 #   BIBLIOTECA UNIVERSITARIA (model do livro)
-import psycopg2
+from model.conexao import Conexao
 
 class LivroModel:
     def __init__(self):
         try:
-            self.conexao = psycopg2.connect(
-                host = "localhost",
-                database = "bibliotec_uni_av3",
-                user = "postgres",
-                password = "admin",
-                port = "5432"
-            )
+            self.conexao = Conexao().conectar()
             self.cursor = self.conexao.cursor()
-            
         except Exception as e:
             print("\nErro ao conectar ao banco:\n", e)
 
@@ -22,12 +15,12 @@ class LivroModel:
             sql = "INSERT INTO livro (titulo, ano_publicacao, id_autor) VALUES (%s, %s, %s)"
             self.cursor.execute(sql, (titulo, ano_publicacao, id_autor))
             self.conexao.commit()
-            print("\nLivro cadastrado com sucesso!\n")
+            return True
 
         except Exception as e:
             print("\nErro ao cadastrar livro.\n", e)
             self.conexao.rollback()
-
+            return False
 
     def listar_livros(self):
         try:
@@ -38,15 +31,17 @@ class LivroModel:
                 livro.ano_publicacao,
                 autor.nome AS nome_autor,
                 autor.nacionalidade
-            FROM LIVRO
-            JOIN autor ON livro.id_autor = autor.id;"""
+            FROM livro
+            JOIN autor ON livro.id_autor = autor.id
+            ORDER BY livro.id;
+            """
 
             self.cursor.execute(sql)
             return self.cursor.fetchall()
         
         except Exception as e:
             print("\nErro ao listar livros.\n", e)
-            return[]
+            return []
         
 
     def atualizar_livro(self, id_livro, novo_titulo=None, novo_ano=None, novo_autor=None):
@@ -69,8 +64,7 @@ class LivroModel:
 
 
             if not partes:
-                print("\nNenhum campo para atualizar.\n")
-                return
+                return False
 
 
             sql += ", ".join(partes) + " WHERE id = %s"
@@ -79,27 +73,22 @@ class LivroModel:
 
             self.cursor.execute(sql, tuple(valores))
             self.conexao.commit()
-            print("\nLivro atualizado com sucesso!\n")
+            return self.cursor.rowcount > 0
 
         except Exception as e:
             print("\nErro ao atualizar livro.\n", e)
             self.conexao.rollback()
+            return False
 
 
     def excluir_livro(self, id_livro):
         try:
-            sql = "DELETE FROM livro WHERE id=%s"
+            sql = "DELETE FROM livro WHERE id = %s"
             self.cursor.execute(sql, (id_livro,))
             self.conexao.commit()
-            print("\nLivro excluído com sucesso!\n")
-
+            return self.cursor.rowcount > 0
+            
         except Exception as e:
             print("\nErro ao excluir livro.\n", e)
             self.conexao.rollback()
-
-
-    def fechar_conexao(self):
-        if self.cursor:
-            self.cursor.close()
-        if self.conexao:
-            self.conexao.close()
+            return False

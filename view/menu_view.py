@@ -23,7 +23,7 @@ class MenuView:
                 self.livro_view.menu_livro()
 
             elif op == "3":
-                print("Encerrando o programa da Bilioteca. . .")
+                print("Encerrando o programa da Biblioteca. . .")
                 break
 
             else:
